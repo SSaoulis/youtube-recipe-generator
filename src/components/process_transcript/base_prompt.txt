@@ -1,0 +1,30 @@
+I will provide text which comes from a transcription of a youtube recipe video.
+Please get the following information and write it under the correspnding sections.
+
+1. Ingredients 
+Get the ingredients used in the recipe, including their quantity in the format:
+Ingredient | quantity
+If the quantity is not said, write "N/A" in the quantity column.
+Just write each new ingredient on a newline
+
+2. Preparation required before cooking:
+Find if any preparation is required before cooking (e.g. Dicing an onion, preheating the oven), and if there is, write it in the format
+
+Dicing an onion
+...
+
+3. Recipe Instructions.
+Generate a list of recipe instructions, numbered. This should flow naturally, and should be easy for a reader to follow. 
+
+4. Notes
+Add additional information that is relevant, such as reasons for doing certain steps. Write each one on a new line, e.g.
+
+Make sure to remove any lemon pips
+...
+
+Start your response with:
+
+1. Ingredients
+...
+
+The video transcript is as follows:

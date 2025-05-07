@@ -1,0 +1,4 @@
+youtube-transcript-api==1.0.3
+python-dotenv==1.1.0
+google-genai==1.13.0
+google-auth[pyopenssl]==2.40.1

@@ -1,11 +1,14 @@
-from typing import Dict, List, Union
+import os
 import tempfile
 from pathlib import Path
+from typing import Dict, List, Union
 
 from jinja2 import Environment, FileSystemLoader
 from weasyprint import HTML
 
-env = Environment(loader=FileSystemLoader("templates"))
+
+templates_path = os.path.join(os.path.dirname(__file__), "templates")
+env = Environment(loader=FileSystemLoader(templates_path))
 
 
 # Custom filter to convert numbers to letters

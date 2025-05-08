@@ -1,17 +1,66 @@
-from typing import List, Dict
+import os
 import re
+from typing import List, Dict, Any, Union
+
+from google import genai
+
+client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
+
+base_prompt_path = os.path.join(
+    os.path.dirname(__file__), "templates", "base_prompt.txt"
+)
+
+with open(base_prompt_path, "r") as f:
+    BASE_PROMPT = f.read()
+
+
+def get_gemini_response(transcript: str) -> Dict[str, Union[List[str], Dict[str, str]]]:
+    """Passes the prompt + transcript into Gemini to get recipe information out.
+
+    Args:
+        transcript (str): The youtube audio transcript
+
+    Returns:
+        Dict[str, Union[List[str], Dict[str, str]]]: The parsed sections for the recipe PDF.
+        Contains:
+        {
+            "ingredients" : A list of ingredients dictionaries, with keys "ingredient" and
+                            "quantities"
+            "prepraration_steps" : A list of preparation steps (strings)
+            "instructions" : A list of instructions steps for the recipe (strings)
+            "notes" : A list of additional information from the video transcript (strings)
+        }
+    """
+
+    gemini_input = BASE_PROMPT + "\n" + transcript
+
+    response = client.models.generate_content(
+        model="gemini-2.0-flash",
+        contents=gemini_input,
+    )
+
+    sections = parse_sections(response.text)
+
+    return sections
 
 
 # This is disgusting because I wanted to make it O(n) for some reason
-def parse_sections(response_text: str) -> List[Dict[str, str]]:
-    """Turns the ingredients into a list of dictionaries containing the ingredient (key) and
-    quantity (value)
+def parse_sections(response_text: str) -> Dict[str, Union[List[str], Dict[str, str]]]:
+    """Parses the Gemini text response into sections. These sections are lists of objects which
+    are used to generate the output PDF.
 
     Args:
         response_text (str): The input recipe text
 
     Returns:
-        List[Dict[str, str]]: List of dictionaries with 'ingredient' and 'quantity' keys
+    A dictionary containing:
+        {
+            "ingredients" : A list of ingredients dictionaries, with keys "ingredient" and
+                            "quantities"
+            "prepraration_steps" : A list of preparation steps (strings)
+            "instructions" : A list of instructions steps for the recipe (strings)
+            "notes" : A list of additional information from the video transcript (strings)
+        }
     """
     lines = response_text.splitlines()
 

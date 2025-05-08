@@ -1,32 +1,26 @@
 I will provide text which comes from a transcription of a youtube recipe video.
-Please get the following information and write it under the correspnding sections.
+Please read the following information and write it under the corresponding sections.
 
 1. Ingredients 
-Get the ingredients used in the recipe, including their quantity in the format:
+List the ingredients used in the recipe, including their quantity in the format:
 Ingredient | quantity
-If the quantity is not said, write "N/A" in the quantity column.
-Just write each new ingredient on a newline
-
-
-3. Recipe Instructions.
-Generate a list of recipe instructions. This should flow naturally, and should be easy for a reader to follow. Try to combine steps, increasing sentence length and reducing total number of steps. Write each one on a new line, e.g.
-Cut the carrots, peppers and garlic
-...
+If the quantity is not stated, try to infer it. It this is not possible, write "N/A" in the quantity column.
+Write each new ingredient on a newline (no numbering or bulletpoints).
 
 2. Preparation required before cooking:
-Find if any preparation is required before cooking (e.g. Dicing an onion, preheating the oven), and if there is, write it in the format:
+Find if any preparation is required before cooking (e.g. Dicing an onion, preheating the oven).
+Do not add steps which are part of the recipe instructions, only actions to take BEFORE cooking, as part of preparation.
+Write each new preparation step on a newline (no numbering or bulletpoints).
 
-Dicing an onion
-...
-Do not add things which are part of the recipe instructions, only actions to take BEFORE cooking, as part of preparation. This will usually be things like cutting vegetables and meat etc....
+3. Recipe Instructions.
+Generate a list of recipe instructions. Try to combine steps, increasing sentence length and reducing total number of steps.
+Write each new preparation step on a newline (no numbering or bulletpoints).
 
 4. Notes
-Add additional information that is relevant, such as reasons for doing certain steps. Write each one on a new line, e.g.
+Add additional information that is relevant, such as reasons for doing certain steps or ingredient substitutes.
+Write each new note on a newline (no numbering or bulletpoints).
 
-Make sure to remove any lemon pips
-...
-
-Start your response with (don't write anything else at the start of the output):
+Start your response with the following (don't write anything else at the start of the output):
 
 1. Ingredients
 ...

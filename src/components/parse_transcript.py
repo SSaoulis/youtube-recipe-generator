@@ -48,7 +48,12 @@ def get_gemini_response(transcript: str) -> Dict[str, Union[List[str], Dict[str,
         logger.error(f"Failed to get Gemini response: {e}")
         traceback.print_exc()
         sys.exit(1)
+    prompt_tokens = response.usage_metadata.prompt_token_count
+    response_tokens = response.usage_metadata.candidates_token_count
 
+    logger.info(
+        f"Got response; used {prompt_tokens} tokens for prompt, {response_tokens} for response."
+    )
     with open("response.txt", "w") as f:
         f.write(response.text)
 

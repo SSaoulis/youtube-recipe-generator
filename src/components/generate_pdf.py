@@ -12,6 +12,8 @@ from reportlab.platypus import (
 )
 from reportlab.lib import colors
 
+from src.logger import logger
+
 
 def letter_index(n: int) -> str:
     """1 → a, 2 → b, …"""
@@ -25,7 +27,7 @@ def generate_recipe_pdf(recipe_data: dict, output_filename: str) -> None:
         recipe_data (dict): Dictionary of recipe entries
         output_filename (str): Where to save the rendered PDF.
     """
-
+    logger.info("Generating Recipe PDF")
     # 1) Set up the document
     doc = SimpleDocTemplate(
         output_filename,
@@ -118,3 +120,4 @@ def generate_recipe_pdf(recipe_data: dict, output_filename: str) -> None:
         story.append(Paragraph(f"– {note}", body))
 
     doc.build(story)
+    logger.info(f"Generated PDF, saved to '{output_filename}'")

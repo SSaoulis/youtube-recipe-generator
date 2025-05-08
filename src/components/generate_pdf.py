@@ -18,7 +18,14 @@ def letter_index(n: int) -> str:
     return chr(96 + n)
 
 
-def generate_recipe_pdf_reportlab(recipe_data: dict, output_filename: str):
+def generate_recipe_pdf(recipe_data: dict, output_filename: str) -> None:
+    """Generates the report pdf from the recipe data extracted with gemini.
+
+    Args:
+        recipe_data (dict): Dictionary of recipe entries
+        output_filename (str): Where to save the rendered PDF.
+    """
+
     # 1) Set up the document
     doc = SimpleDocTemplate(
         output_filename,
@@ -29,7 +36,7 @@ def generate_recipe_pdf_reportlab(recipe_data: dict, output_filename: str):
         bottomMargin=1 * cm,
     )
     styles = getSampleStyleSheet()
-    # You can tweak or add more ParagraphStyles if you like
+
     h1 = ParagraphStyle(
         "RecipeTitle", parent=styles["Title"], alignment=1, spaceAfter=12
     )

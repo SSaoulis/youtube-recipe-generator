@@ -15,8 +15,7 @@ def get_gemini_response(transcript: str):
     gemini_input = BASE_PROMPT + "\n" + transcript
 
     response = client.models.generate_content(
-    model="gemini-2.0-flash",
-    contents=gemini_input,
+        model="gemini-2.0-flash",
+        contents=gemini_input,
     )
     return response.text
-

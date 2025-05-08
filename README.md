@@ -1,25 +1,73 @@
-# Recipe Processing Project
+# youtube-recipe-generator
 
-This is a personal project of mine which takes a url of a youtube recipe video, and generates an output pdf with LaTeX.
+This is a personal project of mine which takes a url of a youtube recipe video, and generates an output pdf of the recipe using the video transcript.
 
-Takes a youtube cooking video and turns it into a recipe .pdf document
+The transcript surprisingly often doesn't contain measurements for ingredients (usually they are displayed on screen or as a viewer you can infer from the video). You may find in the ingredients section of the recipe it 
+
+
+# Usage
+
+There's a simple command line input:
+
+```
+python create_recipe.py \
+        --url="https://www.youtube.com/watch?v=VIdlVi-VzPY" \
+        --output_dir="recipes/"
+```
+
+Which generates the recipe pdf with the youtube title in the output directory (`recipes/` in this case). 
+
+
+
+# Getting Started
+
+
+## 1. Installing the environment
+
+Requirements: `python 3.10` (with `python-venv` installed).
+It probably works on other versions of python but I haven't tested it.
+
+On Linux:
+
+```
+python3.10 -m venv .venv
+source .venv/bin/activate.sh
+python -m pip install -r requirements.txt
+```
+
+On Windows:
+...
+
+## 2. Generating a Gemini API Key
+
+This uses Gemini to parse the transcript of the video. Therefore a Gemini API key is needed. You can generate one really easily [here](https://aistudio.google.com/welcome?utm_source=google&utm_medium=cpc&utm_campaign=FY25-global-DR-gsem-BKWS-1710442&utm_content=text-ad-none-any-DEV_c-CRE_726176697272-ADGP_Hybrid%20%7C%20BKWS%20-%20EXA%20%7C%20Txt-Gemini-Gemini%20API%20Key-KWID_43700081667369045-kwd-2337564139625&utm_term=KW_gemini%20api%20key-ST_gemini%20api%20key&gclsrc=aw.ds&gad_source=1&gad_campaignid=21345648142&gclid=Cj0KCQjwrPHABhCIARIsAFW2XBPBglORV-CyA9OTE0Pmt5Qw3x2QLEpX72Fi0hSp-UbSFYa86O4Um40aAn3WEALw_wcB), which is free (we use the most basic model here). 
+
+Once you have the API key, create a `.env` file in this directory, and add you key with the line:
+
+```
+GEMINI_API_KEY="XXXXXXXXXXXXXXXXXXXXXXXX"
+```
+
+
+And that's it! All is set up for use now.
 
 # Components
 
 ## 1. YouTube URL to transcription
 
-1. Take the transcription from the video if it exists
-2. If it doesn't, donwload and transcribe it.
+- Take the transcript from the video if it exists
+- **TODO**: If it doesn't, donwload and transcribe it.
 
 ## 2. Transcription Parsing
 
-1. Parse the transcription with an LLM and generate the sections from it.
+- Parse the transcription with an LLM and generate the sections from it.
     - Ingredients, unit
     - Preparation required before cooking
     - Recipe Instructions
+    - Notes
     
 ## 3. Document Formatting
 
-1. Take the recipe sections and place them into a LaTeX format 
+- Take the recipe sections and place them into a LaTeX format 
     - Convert the units to grams with a lookup table
  

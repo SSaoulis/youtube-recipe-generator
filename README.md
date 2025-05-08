@@ -2,7 +2,7 @@
 
 This is a personal project of mine which takes a url of a youtube recipe video, and generates an output pdf of the recipe using the video transcript.
 
-The transcript surprisingly often doesn't contain measurements for ingredients (usually they are displayed on screen or as a viewer you can infer from the video). You may find in the ingredients section of the recipe it 
+The transcript surprisingly often doesn't contain measurements for ingredients (usually they are displayed on screen or as a viewer you can infer from the video). Therefore you may find in the ingredients section of the recipe quantities may be missing. This is addressed - you generate the html and make manual changes to it. 
 
 
 # Usage
@@ -15,7 +15,22 @@ python create_recipe.py \
         --output_dir="recipes/"
 ```
 
-Which generates the recipe pdf with the youtube title in the output directory (`recipes/` in this case). 
+Which generates the recipe pdf with the youtube title in the output directory. 
+
+To make changes to the pdf, you can optionally save out the html from which the doc is generated from with the `--save_html` flag:
+
+```
+python create_recipe.py \
+        --url="https://www.youtube.com/watch?v=VIdlVi-VzPY" \
+        --output_dir="recipes/" \
+        --save_html
+```
+and you can render the html to pdf with: 
+
+```
+python render_html.py \
+        --html_path="path/to/html"
+```
 
 
 
@@ -31,12 +46,16 @@ On Linux:
 
 ```
 python3.10 -m venv .venv
-source .venv/bin/activate.sh
+source .venv/bin/activate
 python -m pip install -r requirements.txt
 ```
 
-On Windows:
-...
+On Windows (command prompt):
+```
+python -m venv .venv
+.venv\Scripts\activate.bat
+python -m pip install -r requirements.txt
+```
 
 ## 2. Generating a Gemini API Key
 

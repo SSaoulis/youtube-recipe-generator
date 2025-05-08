@@ -1,8 +1,12 @@
 import os
 import re
-from typing import List, Dict, Any, Union
+import traceback
+import sys
+from typing import List, Dict, Union
 
 from google import genai
+
+from src.logger import logger
 
 client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
 
@@ -12,6 +16,7 @@ base_prompt_path = os.path.join(
 
 with open(base_prompt_path, "r") as f:
     BASE_PROMPT = f.read()
+logger.info("Successfully read base prompt")
 
 
 def get_gemini_response(transcript: str) -> Dict[str, Union[List[str], Dict[str, str]]]:
@@ -33,12 +38,21 @@ def get_gemini_response(transcript: str) -> Dict[str, Union[List[str], Dict[str,
     """
 
     gemini_input = BASE_PROMPT + "\n" + transcript
+    logger.info("Submitting transcript to Gemini")
+    try:
+        response = client.models.generate_content(
+            model="gemini-2.5-flash-preview-04-17",
+            contents=gemini_input,
+        )
+    except Exception as e:
+        logger.error(f"Failed to get Gemini response: {e}")
+        traceback.print_exc()
+        sys.exit(1)
 
-    response = client.models.generate_content(
-        model="gemini-2.0-flash",
-        contents=gemini_input,
-    )
+    with open("response.txt", "w") as f:
+        f.write(response.text)
 
+    logger.info("Parsing Gemini output to sections")
     sections = parse_sections(response.text)
 
     return sections
@@ -57,8 +71,8 @@ def parse_sections(response_text: str) -> Dict[str, Union[List[str], Dict[str, s
         {
             "ingredients" : A list of ingredients dictionaries, with keys "ingredient" and
                             "quantities"
-            "prepraration_steps" : A list of preparation steps (strings)
-            "instructions" : A list of instructions steps for the recipe (strings)
+            "preparation" : A list of preparation steps (strings)
+            "steps" : A list of instructions steps for the recipe (strings)
             "notes" : A list of additional information from the video transcript (strings)
         }
     """
@@ -75,7 +89,7 @@ def parse_sections(response_text: str) -> Dict[str, Union[List[str], Dict[str, s
         line = line.strip()
 
         # Ingredients section
-        if line.startswith("1. Ingredients"):
+        if line.startswith("1."):
             in_ingredients_section = True
             continue
         if in_ingredients_section:
@@ -89,7 +103,7 @@ def parse_sections(response_text: str) -> Dict[str, Union[List[str], Dict[str, s
                     ingredients.append({"ingredient": ingredient, "quantity": quantity})
 
         # Preparation Section
-        if line.startswith("2. Preparation required before cooking"):
+        if line.startswith("2."):
             in_preparation_steps = True
             continue
         if in_preparation_steps:
@@ -99,7 +113,7 @@ def parse_sections(response_text: str) -> Dict[str, Union[List[str], Dict[str, s
             preparation_steps.append(line)
 
         # Recipe Instuctions Section
-        if line.startswith("3. Recipe Instructions"):
+        if line.startswith("3."):
             in_instructions = True
             continue
         if in_instructions:
@@ -109,7 +123,7 @@ def parse_sections(response_text: str) -> Dict[str, Union[List[str], Dict[str, s
             instructions.append(line)
 
         # Notes Section
-        if line.startswith("4. Notes"):
+        if line.startswith("4."):
             in_notes = True
             continue
         if in_notes:
@@ -120,7 +134,7 @@ def parse_sections(response_text: str) -> Dict[str, Union[List[str], Dict[str, s
 
     return {
         "ingredients": ingredients,
-        "preparation_steps": preparation_steps,
-        "instructions": instructions,
+        "preparation": preparation_steps,
+        "steps": instructions,
         "notes": notes,
     }

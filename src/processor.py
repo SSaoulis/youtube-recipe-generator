@@ -8,7 +8,7 @@ from src.components.parse_transcript import get_gemini_response
 from src.components.generate_pdf import generate_recipe_pdf
 
 
-def process_url(url: str, recipe_output_dir: str, save_html: bool) -> None:
+def process_url(url: str, recipe_output_dir: str) -> None:
     """Generates the report output from the youtube video URL.
     1. Gets the youtube transcript and metadata
     2. Pass the transcript to gemini and get the parsed information
@@ -17,15 +17,15 @@ def process_url(url: str, recipe_output_dir: str, save_html: bool) -> None:
     Args:
         url (str): Youtube video URL.
         recipe_output_dir (str, optional): A specified dir to save the pdf in. Defaults to None.
-        save_html (bool): Whether to save the html generated from the sections.
     """
     # 1. Download the transcript and metadata
     transcript = get_transcript_from_url(url)
     metadata = get_video_metadata(url)
 
     # 2. Read the transcript and get the parsed sections:
-    # (ingredients, preparatation, directions, instructions, notes)
+    # (ingredients, preparatation, steps, notes)
     sections = get_gemini_response(transcript)
+
     sections.update(metadata)
 
     # 3. Generate the output pdf
@@ -33,4 +33,4 @@ def process_url(url: str, recipe_output_dir: str, save_html: bool) -> None:
         os.makedirs(recipe_output_dir, exist_ok=True)
     output_filename = os.path.join(recipe_output_dir, sections["title"] + ".pdf")
 
-    generate_recipe_pdf(sections, output_filename=output_filename, save_html=save_html)
+    generate_recipe_pdf(sections, output_filename=output_filename)

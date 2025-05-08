@@ -5,7 +5,7 @@ This is a personal project of mine which takes a url of a youtube recipe video, 
 The transcript surprisingly often doesn't contain measurements for ingredients (usually they are displayed on screen or as a viewer you can infer from the video). Therefore you may find in the ingredients section of the recipe quantities may be missing. This is addressed - you generate the html and make manual changes to it. 
 
 
-# Usage
+## Usage
 
 There's a simple command line input:
 
@@ -34,10 +34,10 @@ python render_html.py \
 
 
 
-# Getting Started
+## Getting Started
 
 
-## 1. Installing the environment
+### 1. Installing the environment
 
 Requirements: `python 3.10` (with `python-venv` installed).
 It probably works on other versions of python but I haven't tested it.
@@ -57,11 +57,11 @@ python -m venv .venv
 python -m pip install -r requirements.txt
 ```
 
-## 2. Generating a Gemini API Key
+### 2. Generating a Gemini API Key
 
 This uses Gemini to parse the transcript of the video. Therefore a Gemini API key is needed. You can generate one really easily [here](https://aistudio.google.com/welcome?utm_source=google&utm_medium=cpc&utm_campaign=FY25-global-DR-gsem-BKWS-1710442&utm_content=text-ad-none-any-DEV_c-CRE_726176697272-ADGP_Hybrid%20%7C%20BKWS%20-%20EXA%20%7C%20Txt-Gemini-Gemini%20API%20Key-KWID_43700081667369045-kwd-2337564139625&utm_term=KW_gemini%20api%20key-ST_gemini%20api%20key&gclsrc=aw.ds&gad_source=1&gad_campaignid=21345648142&gclid=Cj0KCQjwrPHABhCIARIsAFW2XBPBglORV-CyA9OTE0Pmt5Qw3x2QLEpX72Fi0hSp-UbSFYa86O4Um40aAn3WEALw_wcB), which is free (we use the most basic model here). 
 
-Once you have the API key, create a `.env` file in this directory, and add you key with the line:
+Once you have the API key, create a `.env` file in this directory, and add your key with the line:
 
 ```
 GEMINI_API_KEY="XXXXXXXXXXXXXXXXXXXXXXXX"
@@ -70,23 +70,12 @@ GEMINI_API_KEY="XXXXXXXXXXXXXXXXXXXXXXXX"
 
 And that's it! All is set up for use now.
 
-# Components
+## Backlog
 
-## 1. YouTube URL to transcription
+Small improvements to add:
 
-- Take the transcript from the video if it exists
-- **TODO**: If it doesn't, donwload and transcribe it.
+- Add `html` conversion to `.docx` format, which may be easier to make changes to.
+- Add video portion generation, eg generate recipe from only between timestamps 2:30 and 5:00 of the video. 
 
-## 2. Transcription Parsing
-
-- Parse the transcription with an LLM and generate the sections from it.
-    - Ingredients, unit
-    - Preparation required before cooking
-    - Recipe Instructions
-    - Notes
-    
-## 3. Document Formatting
-
-- Take the recipe sections and place them into a LaTeX format 
-    - Convert the units to grams with a lookup table
- 
+New features: 
+- Add transcript generation - if a transcript doesn't exist on the video, generate one with a transcription model.

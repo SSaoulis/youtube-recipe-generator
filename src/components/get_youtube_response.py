@@ -7,6 +7,8 @@ from youtube_transcript_api import YouTubeTranscriptApi
 from youtube_transcript_api.formatters import JSONFormatter
 from pytubefix import YouTube
 
+from src.logger import logger
+
 ytt_api = YouTubeTranscriptApi()
 formatter = JSONFormatter()
 
@@ -53,12 +55,19 @@ def get_transcript_from_url(url: str) -> str:
     Returns:
         str: A string containing the entire video transcript.
     """
+    logger.info(f"Extracting video ID from URL: {url}")
     # Parse the ID from the URL
     id = extract_youtube_id(url)
+    logger.info(f"Video ID extracted: {id}")
 
     try:
+        logger.info(f"Fetching transcript for video ID: {id}")
         fetched_transcript = ytt_api.fetch(id, languages=["en-US", "en", "en-UK"])
-    except Exception:
+        logger.info(
+            f"Transcript fetched. Number of snippets got: {len(fetched_transcript)}"
+        )
+    except Exception as e:
+        logger.error(f"Failed to fetch transcript: {e}")
         traceback.print_exc()
         sys.exit(1)
 
@@ -79,5 +88,13 @@ def get_video_metadata(url: str) -> Dict[str, str]:
     Returns:
         Dict[str, str]: Dictionary containing the keys "title" and "author".
     """
-    yt = YouTube(url)
-    return {"title": yt.title, "author": yt.author}
+    logger.info(f"Fetching metadata from URL: {url}")
+    try:
+        yt = YouTube(url)
+        metadata = {"title": yt.title, "author": yt.author}
+        logger.info(f"Got video metadata")
+    except Exception as e:
+        logger.error(f"Failed to fetch youtube metadata: {e}")
+        traceback.print_exc()
+        sys.exit(1)
+    return metadata

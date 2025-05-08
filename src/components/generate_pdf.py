@@ -1,66 +1,113 @@
-import os
-import tempfile
-from pathlib import Path
-from typing import Dict, List, Union
-
-from jinja2 import Environment, FileSystemLoader
-from weasyprint import HTML
-
-
-templates_path = os.path.join(os.path.dirname(__file__), "templates")
-env = Environment(loader=FileSystemLoader(templates_path))
-
-
-# Custom filter to convert numbers to letters
-def letter_index(number):
-    return chr(96 + number)  # 97 is ASCII for 'a'
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.units import cm
+from reportlab.platypus import (
+    SimpleDocTemplate,
+    Paragraph,
+    Spacer,
+    Table,
+    TableStyle,
+    ListFlowable,
+    ListItem,
+)
+from reportlab.lib import colors
 
 
-env.filters["letter_index"] = letter_index
-
-template = env.get_template("recipe_template.html")
-
-
-def generate_recipe_pdf(
-    recipe_data: Dict[str, Union[List[str], Dict[str, str]]],
-    output_filename: str,
-    save_html: bool,
-) -> None:
-    """Generates the recipe PDF from the parsed gemini output and the HTML Template.
-    See templates/recipe_template.html.
-
-    Writes the output to the specified filepath as a PDF.
-
-    Args:
-        recipe_data (Dict[str, Union[List[str], Dict[str, str]]]): The recipe data parsed from
-          gemini response
-        output_filename (str): Place to save the output pdf.
-        save_html (bool): Whether to save the html (if manual changes are needed).
-    """
-    html_content = template.render(**recipe_data)
-
-    # Save to a tempfile
-    with tempfile.NamedTemporaryFile(
-        mode="w", suffix=".html", delete=False
-    ) as tmp_html:
-        tmp_html.write(html_content)
-        temp_html_path = tmp_html.name
-
-    if save_html:
-        html_filename = f"{Path(output_filename).stem}.html"
-        with open(html_filename, "w") as f:
-            f.write(html_content)
-
-    # Render the PDF from the temporary HTML file
-    render_html_to_pdf(temp_html_path, output_filename)
+def letter_index(n: int) -> str:
+    """1 → a, 2 → b, …"""
+    return chr(96 + n)
 
 
-def render_html_to_pdf(html_filename: str, output_filename: str) -> None:
-    """Renders an HTML file into pdf.
+def generate_recipe_pdf_reportlab(recipe_data: dict, output_filename: str):
+    # 1) Set up the document
+    doc = SimpleDocTemplate(
+        output_filename,
+        pagesize=A4,
+        leftMargin=1 * cm,
+        rightMargin=1 * cm,
+        topMargin=1 * cm,
+        bottomMargin=1 * cm,
+    )
+    styles = getSampleStyleSheet()
+    # You can tweak or add more ParagraphStyles if you like
+    h1 = ParagraphStyle(
+        "RecipeTitle", parent=styles["Title"], alignment=1, spaceAfter=12
+    )
+    h2 = ParagraphStyle(
+        "SectionTitle", parent=styles["Heading2"], spaceBefore=12, spaceAfter=6
+    )
+    body = styles["BodyText"]
 
-    Args:
-        html_filename (str): _description_
-        output_filename (str): _description_
-    """
+    story = []
 
-    HTML(html_filename).write_pdf(output_filename)
+    # 2) Title
+    story.append(Paragraph(recipe_data["title"], h1))
+    story.append(Spacer(1, 12))
+
+    # 3) Ingredients grid (2 columns)
+    ingredients = recipe_data[
+        "ingredients"
+    ]  # list of {'ingredient': str, 'quantity': str}
+    cols = 3
+    rows = (len(ingredients) + cols - 1) // cols
+    data = []
+    for r in range(rows):
+        row = []
+        for c in range(cols):
+            idx = r + c * rows
+            if idx < len(ingredients):
+                item = ingredients[idx]
+                txt = f"<b>{item['ingredient']}</b>"
+                if item.get("quantity") and item["quantity"] != "N/A":
+                    txt += f": {item['quantity']}"
+                row.append(Paragraph(txt, body))
+            else:
+                row.append("")
+        data.append(row)
+
+    table = Table(data, colWidths=[doc.width / cols] * cols)
+    table.setStyle(
+        TableStyle(
+            [
+                # b) full‐table background
+                ("BACKGROUND", (0, 0), (-1, -1), colors.wheat),
+                # a) remove all grid & box lines by simply *not* declaring them
+                # c) larger horizontal padding
+                ("LEFTPADDING", (0, 0), (-1, -1), 15),
+                ("RIGHTPADDING", (0, 0), (-1, -1), 15),
+                # you can also tweak vertical padding if you like:
+                ("TOPPADDING", (0, 0), (-1, -1), 6),
+                ("BOTTOMPADDING", (0, 0), (-1, -1), 6),
+                # keep vertical alignment
+                ("VALIGN", (0, 0), (-1, -1), "TOP"),
+            ]
+        )
+    )
+
+    story.append(Paragraph("Ingredients", h2))
+    story.append(table)
+    story.append(Spacer(1, 12))
+
+    # 4) Preparation list
+    story.append(Paragraph("Preparation", h2))
+    prep_items = []
+    for i, step in enumerate(recipe_data["preparation"], start=1):
+        prep_items.append(ListItem(Paragraph(f"{step}", body), leftIndent=12))
+    story.append(ListFlowable(prep_items, bulletType="bullet"))
+    story.append(Spacer(1, 12))
+
+    # 5) Steps
+    story.append(Paragraph("Steps", h2))
+    step_items = []
+    for step in recipe_data["steps"]:
+        step_items.append(ListItem(Paragraph(step, body), leftIndent=12))
+    story.append(ListFlowable(step_items, bulletType="1"))
+    story.append(Spacer(1, 12))
+
+    # 6) Notes (two‐column if you like)
+    story.append(Paragraph("Notes", h2))
+    notes = recipe_data.get("notes", [])
+    for note in notes:
+        story.append(Paragraph(f"– {note}", body))
+
+    doc.build(story)

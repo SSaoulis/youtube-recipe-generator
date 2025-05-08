@@ -20,12 +20,8 @@ def main():
     logger.info("Starting recipe creation process...")
     logger.info(f"Video URL: {args.url}")
     logger.info(f"Saving to: {args.output_dir}")
-    if args.save_html:
-        logger.info("HTML saving is enabled.")
 
-    process_url(
-        url=args.url, recipe_output_dir=args.output_dir, save_html=args.save_html
-    )
+    process_url(url=args.url, recipe_output_dir=args.output_dir)
 
 
 if __name__ == "__main__":
@@ -42,12 +38,6 @@ if __name__ == "__main__":
         type=str,
         default="recipes/",
         help="Directory to save recipes to",
-    )
-    parser.add_argument(
-        "--save_html",
-        required=False,
-        action="store_true",
-        help="Flag to save the HTML of the page",
     )
     parser.add_argument(
         "--verbose",

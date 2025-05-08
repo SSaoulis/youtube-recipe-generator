@@ -7,14 +7,18 @@ Ingredient | quantity
 If the quantity is not said, write "N/A" in the quantity column.
 Just write each new ingredient on a newline
 
+
+3. Recipe Instructions.
+Generate a list of recipe instructions. This should flow naturally, and should be easy for a reader to follow. Try to combine steps, increasing sentence length and reducing total number of steps. Write each one on a new line, e.g.
+Cut the carrots, peppers and garlic
+...
+
 2. Preparation required before cooking:
-Find if any preparation is required before cooking (e.g. Dicing an onion, preheating the oven), and if there is, write it in the format
+Find if any preparation is required before cooking (e.g. Dicing an onion, preheating the oven), and if there is, write it in the format:
 
 Dicing an onion
 ...
-
-3. Recipe Instructions.
-Generate a list of recipe instructions, numbered. This should flow naturally, and should be easy for a reader to follow. 
+Do not add things which are part of the recipe instructions, only actions to take BEFORE cooking, as part of preparation. This will usually be things like cutting vegetables and meat etc....
 
 4. Notes
 Add additional information that is relevant, such as reasons for doing certain steps. Write each one on a new line, e.g.
@@ -22,7 +26,7 @@ Add additional information that is relevant, such as reasons for doing certain s
 Make sure to remove any lemon pips
 ...
 
-Start your response with:
+Start your response with (don't write anything else at the start of the output):
 
 1. Ingredients
 ...

@@ -5,7 +5,7 @@ Please read the following information and write it under the corresponding secti
 List the ingredients used in the recipe, including their quantity in the format:
 Ingredient | quantity
 If the quantity is not stated, try to infer it. It this is not possible, write "N/A" in the quantity column.
-Write each new ingredient on a newline (no numbering or bulletpoints).
+Write each new ingredient on a newline (no numbering or bulletpoints). Begin the first line with the ingredient.
 
 2. Preparation required before cooking:
 Find if any preparation is required before cooking (e.g. Dicing an onion, preheating the oven).

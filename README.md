@@ -1,6 +1,6 @@
 # youtube-recipe-generator
 
-This is a personal project of mine which takes a url of a youtube recipe video, and generates an output pdf of the recipe using the video transcript.
+This is a personal project of mine which takes a url of a youtube recipe video, and generates an output pdf of the recipe using the video transcript. The transcript is summarised by an LLM (Gemini), the output is then parsed and formatted in the respective sections in the pdf.
 
 The transcript surprisingly often doesn't contain measurements for ingredients (usually they are displayed on screen or as a viewer you can infer from the video). Therefore you may find in the ingredients section of the recipe quantities may be missing.
 

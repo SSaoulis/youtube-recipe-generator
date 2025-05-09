@@ -4,6 +4,9 @@ This is a personal project of mine which takes a url of a youtube recipe video, 
 
 The transcript surprisingly often doesn't contain measurements for ingredients (usually they are displayed on screen or as a viewer you can infer from the video). Therefore you may find in the ingredients section of the recipe quantities may be missing.
 
+![Demo of the tool](images/demo.png "Demonstration")
+
+
 
 ## Usage
 

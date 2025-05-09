@@ -20,6 +20,14 @@ python create_recipe.py \
 
 Which generates the recipe pdf with the youtube title in the output directory. 
 
+You can add a `--verbose` flag to see outputs, such as number of tokens used:
+
+```
+python create_recipe.py \
+        --url="https://www.youtube.com/watch?v=VIdlVi-VzPY" \
+        --output_dir="recipes/" \
+        --verbose
+```
 ## Getting Started
 
 

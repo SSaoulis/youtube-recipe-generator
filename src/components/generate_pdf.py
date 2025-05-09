@@ -45,12 +45,24 @@ def generate_recipe_pdf(recipe_data: dict, output_filename: str) -> None:
     h2 = ParagraphStyle(
         "SectionTitle", parent=styles["Heading2"], spaceBefore=12, spaceAfter=6
     )
+    h3 = ParagraphStyle(
+        "Author",
+        parent=styles["Normal"],
+        fontName="Helvetica-Oblique",
+        fontSize=10,
+        textColor=colors.grey,
+        alignment=1,
+        spaceAfter=12,
+    )
+
     body = styles["BodyText"]
 
     story = []
 
-    # 2) Title
+    # Title + author
     story.append(Paragraph(recipe_data["title"], h1))
+    story.append(Spacer(1, 4))
+    story.append(Paragraph(f"by {recipe_data['author']}", h3))
     story.append(Spacer(1, 12))
 
     # 3) Ingredients grid (2 columns)
@@ -78,16 +90,11 @@ def generate_recipe_pdf(recipe_data: dict, output_filename: str) -> None:
     table.setStyle(
         TableStyle(
             [
-                # b) full‐table background
                 ("BACKGROUND", (0, 0), (-1, -1), colors.wheat),
-                # a) remove all grid & box lines by simply *not* declaring them
-                # c) larger horizontal padding
                 ("LEFTPADDING", (0, 0), (-1, -1), 15),
                 ("RIGHTPADDING", (0, 0), (-1, -1), 15),
-                # you can also tweak vertical padding if you like:
                 ("TOPPADDING", (0, 0), (-1, -1), 6),
                 ("BOTTOMPADDING", (0, 0), (-1, -1), 6),
-                # keep vertical alignment
                 ("VALIGN", (0, 0), (-1, -1), "TOP"),
             ]
         )

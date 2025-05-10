@@ -54,13 +54,7 @@ def get_gemini_response(transcript: str) -> Dict[str, Union[List[str], Dict[str,
     logger.info(
         f"Got response; used {prompt_tokens} tokens for prompt, {response_tokens} for response."
     )
-    with open("response.txt", "w") as f:
-        f.write(response.text)
-
-    logger.info("Parsing Gemini output to sections")
-    sections = parse_sections(response.text)
-
-    return sections
+    return response
 
 
 # This is disgusting because I wanted to make it O(n) for some reason
